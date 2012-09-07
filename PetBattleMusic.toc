@@ -1,0 +1,14 @@
+﻿## Title: Pet Battle Music
+## Interface: 50001
+## Author: Choonster
+## Version: @project-version@
+## Notes: Plays custom music during pet battles. See music.lua for configuration instructions.
+## X-License: MIT License
+
+#@no-lib-strip@
+Libs\LibStub\LibStub.lua
+Libs\AceTimer-3.0\AceTimer-3.0.xml
+#@end-no-lib-strip@
+
+music.lua
+core.lua
