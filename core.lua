@@ -5,6 +5,8 @@
 -- Each track is represented internally by two indices, one for the index of its path and the other for the index of its length.
 -- Functions that return an index will always return the path index. Functions that take an index argument accept either index.
 -- You can use PBM_PBMAPI:IndicesAreSameTrack(index1, index2) to test if two indices correspond to the same track.
+-- @class file
+-- @name core.lua
 
 --[[-----------------
 -- START OF CONFIG --
