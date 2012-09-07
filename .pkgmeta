@@ -8,4 +8,4 @@
 		
 package-as: PetBattleMusic
 
-license-output: LICENSE.txt
+#license-output: LICENSE.txt # Curse leaves the licence with <copyright holder> and <year>, it's easier to just handle the licence manually

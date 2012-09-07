@@ -1,4 +1,16 @@
-﻿local MAX_TRIES = 10 -- The number of times the AddOn will try to select a random track different to the previous one before using the last selection anyway
+﻿--- Pet Battle Music is an AddOn that plays custom music during pet battles.
+-- All functions with return values return nil plus an error on failure.
+-- PBM_API.VERSION contains the current version string.
+--
+-- Each track is represented internally by two indices, one for the index of its path and the other for the index of its length.
+-- Functions that return an index will always return the path index. Functions that take an index argument accept either index.
+-- You can use PBM_PBMAPI:IndicesAreSameTrack(index1, index2) to test if two indices correspond to the same track.
+
+--[[-----------------
+-- START OF CONFIG --
+--]]-----------------
+
+local MAX_TRIES = 10 -- The number of times the AddOn will try to select a random track different to the previous one before using the last selection anyway
 local DELAY = 0 -- The number of seconds to wait between a track ending and a new one being played.
 
 -- Known Issue: (Beta Build 16030 and Live Build 16016 - 2012-09-02) If DELAY is greater than 0, the current track will start to repeat itself before the next one is played.
@@ -171,14 +183,6 @@ local function GetPathAndLength(index)
 	
 	return path, length
 end
-
---- Pet Battle Music is an AddOn that plays custom music during pet battles.
--- All functions with return values return nil plus an error on failure.
--- PBM_API.VERSION contains the current version string.
---
--- Each track is represented internally by two indices, one for the index of its path and the other for the index of its length.
--- Functions that return an index will always return the path index. Functions that take an index argument accept either index.
--- You can use PBM_PBMAPI:IndicesAreSameTrack(index1, index2) to test if two indices correspond to the same track.
 
 PBMAPI = {}
 PBMAPI.VERSION = VERSION
