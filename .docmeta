@@ -1,3 +1,4 @@
-﻿﻿type: luadoc
-input-file: core.lua
-output-page: PublicAPI
+﻿-
+    type: luadoc
+    input-file: core.lua
+    output-page: PublicAPI
