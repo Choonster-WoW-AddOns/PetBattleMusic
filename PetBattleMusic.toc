@@ -1,5 +1,5 @@
 ﻿## Title: Pet Battle Music
-## Interface: 50001
+## Interface: 50100
 ## Author: Choonster
 ## Version: @project-version@
 ## Notes: Plays custom music during pet battles. See music.lua for configuration instructions.
