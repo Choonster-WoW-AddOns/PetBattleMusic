@@ -28,7 +28,8 @@ local addon, ns = ...
 --
 -- IMPORTANT: All three Populate_Music scripts will completely overwrite your existing music.lua file, so back up any changes you've made before running them.
 
-
-ns.MUSIC = {
+-- General Music
+ns.GENERAL_MUSIC = {
 -- Put your entries below this line
+
 

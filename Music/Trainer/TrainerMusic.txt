@@ -1,0 +1,1 @@
+Put your trainer (NPC) battle music in this folder.

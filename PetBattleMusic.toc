@@ -10,5 +10,7 @@ Libs\LibStub\LibStub.lua
 Libs\AceTimer-3.0\AceTimer-3.0.xml
 #@end-no-lib-strip@
 
+
+config.lua
 music.lua
 core.lua

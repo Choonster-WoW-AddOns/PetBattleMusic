@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The path to your WoW directory
-WOW_DIR="/home/bob-smith/Games/World of Warcraft"
+WOW_DIR="/home/CoonPC/Games/World of Warcraft"
 
 # -------------
 # END OF CONFIG
@@ -13,28 +13,46 @@ MUSIC_DIR="$PBM_DIR/Music"
 
 FULL_MUSIC_PATH="$WOW_DIR/$MUSIC_DIR"
 FULL_LUA_PATH="$WOW_DIR/$PBM_DIR/music.lua"
+FULL_SCRIPTPARTS_PATH="$WOW_DIR/$PBM_DIR/ScriptParts"
 
-read -r -d '' MUSIC_HEADER < "$WOW_DIR/$PBM_DIR/ScriptParts/music_header.txt"
-read -r -d '' MUSIC_FOOTER < "$WOW_DIR/$PBM_DIR/ScriptParts/music_footer.txt"
+DIRECTORIES=( General Wild Trainer Player Victory Defeat )
 
-echo $MUSIC_HEADER > "$FULL_LUA_PATH" # > overwrites the existing file content.
-
-count=0
-
-cd "$FULL_MUSIC_PATH"
 shopt -s nullglob
 
-for filename in *.mp3
-do
-	filelength=$(mp3info -p %S "$filename")
-	relpath="$MUSIC_DIR/$filename"
+function addfiles {
+	cd "$1"
 	
-	echo "Processing $filename..."
+	name=${1#$FULL_MUSIC_PATH/}
+	printf "\nProcessing $name Music:\n\n"
+	
+	count=0
+	for filename in *.mp3
+	do
+		filelength=$(mp3info -p %S "$filename")
+		fullpath="$PWD/$filename"
+		relpath=${fullpath#$WOW_DIR/} # Strip the WoW directory from the front of the complete path		
+		
+		echo "Processing $filename..."
+	
+		printf "\t\"%s\", %d,\n" "$relpath" $filelength >> "$FULL_LUA_PATH" # >> appends to the existing file content.
+		let count+=1
+	done
+	printf "\nFinished processing $count files.\n"
+}
 
-	echo -e "\t\"$relpath\", $filelength," >> "$FULL_LUA_PATH" # >> appends to the existing file content.
-	let count+=1
+printf "" > "$FULL_LUA_PATH" # > overwrites the existing file content. We write an empty string just to wipe the existing file content.
+
+for (( i = 0; i <= 5; i++)) # BASH arrays are zero-based!
+do
+	read -r -d '' part < "$FULL_SCRIPTPARTS_PATH/music_part$i.lua"
+	echo "$part" >> "$FULL_LUA_PATH"
+	
+	printf "\n" >> "$FULL_LUA_PATH"
+	addfiles "$FULL_MUSIC_PATH/${DIRECTORIES[i]}"
+	printf "\n" >> "$FULL_LUA_PATH"
+	
+	printf "\n"
 done
 
-echo "Finished processing $count files."
-
-echo $MUSIC_FOOTER >> "$FULL_LUA_PATH"
+read -r -d '' MUSIC_FOOTER < "$FULL_SCRIPTPARTS_PATH/music_footer.lua"
+echo "$MUSIC_FOOTER" >> "$FULL_LUA_PATH"
