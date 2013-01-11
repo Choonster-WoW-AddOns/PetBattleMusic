@@ -205,6 +205,10 @@ function PBM:StopMusic()
 end
 
 function PBM:PET_BATTLE_OPENING_START()
+	if IsPlaying then
+		self:StopMusic()
+	end
+	
 	if MUTE_MUSIC then
 		MuteTimer.EnableMusic = _G.GetCVar("Sound_EnableMusic")
 		_G.SetCVar("Sound_EnableMusic", 0)
