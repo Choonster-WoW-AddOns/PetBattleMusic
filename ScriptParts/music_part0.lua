@@ -23,7 +23,8 @@ local addon, ns = ...
 -- Just open the script in a text editor (one with syntax highlighting will make this easier) and change the variable(s) at the top to match your computer's setup.
 --
 -- If you're on a Unix-like OS (e.g. Linux, Mac), you can use the included PopulateMusic_Unix.sh script instead. You will need to change the variable at the top to point to your WoW directory.
--- Note that this version requires the mp3info program to be installed in your PATH. mp3info is available from the link below (or possibly your OS's package manager):
+-- Note that this version requires the mp3info program if you have any MP3 files and the ogginfo program from the vorbis-tools package if you have any Ogg files.
+-- vorbis-tools should be available from your OS's package manager and mp3info is available from the link below (or possibly your OS's package manager):
 -- 		http://ibiblio.org/mp3info/
 --
 -- IMPORTANT: All three Populate_Music scripts will completely overwrite your existing music.lua file, so back up any changes you've made before running them.

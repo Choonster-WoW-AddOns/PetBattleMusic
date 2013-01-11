@@ -10,12 +10,14 @@ $wowPath = 'C:\Users\Public\Games\World of Warcraft'
 # http://www.kixtart.org/forums/ubbthreads.php?ubb=showflat&Number=160880&page=1
 $osVersion = (Get-WmiObject Win32_OperatingSystem).Version # Get the OS version (i.e. the version of NT)
 
-Function isVer  # Quick helper function that takes an arbitrary number of version strings and checks if any of them match OSVER
+Function isVer  # Quick helper function that takes an arbitrary number of version strings and checks if any of them match $osVersion
 {
 	foreach ($arg in $args)
 	{
 		if ( $osVersion.StartsWith($arg + ".") ) # Add a dot to the end of the string to make sure "6.1" doesn't match "6.10.XXXX" (just in case MS ever uses a double digit NT subversion)
+		{
 			return $true
+		}
 	}
 	return $false
 }
@@ -62,6 +64,8 @@ $shell = New-Object -COMObject Shell.Application
 
 $stream = New-Object System.IO.StreamWriter $luapath, $false, ([System.Text.Encoding]::UTF8)
 
+$include = ( "*.mp3", "*.ogg" )
+
 Function AddFiles ($findpath)
 {
 	$folder = Split-Path $findpath
@@ -72,7 +76,7 @@ Function AddFiles ($findpath)
 	
 	$count = 0
 	
-	foreach ($file in Get-ChildItem -Path $findpath -Include '*.mp3')
+	foreach ($file in Get-ChildItem -Path $findpath -Include $include)
 	{
 		$fullname = $file.FullName
 		$filename = Split-Path $fullname -Leaf
@@ -80,12 +84,29 @@ Function AddFiles ($findpath)
 		$lengthStr = $shellfolder.GetDetailsOf($shellfile, $lengthIndex)
 		$hours, $mins, $secs = [double[]] ($lengthStr -Split ':')
 		
+		$invalidLength = $false
+		
 		$length = ($hours * 60 * 60) + ($mins * 60) + $secs
+		
+		if ($length -eq 0)
+		{
+			$length = 1
+			$invalidLength = $true
+		}
 		
 		$filepath = $fullname.Replace($wowPath + '\', '')
 		$outstring = "`t[[$filepath]], $length,"
 		"Processing: $filename..."
-		$stream.WriteLine($outstring)
+		
+		if ($invalidLength)
+		{
+			$stream.WriteLine($outstring + ' -- Warning: This file has an invalid or zero length!')
+			"Warning: This file has an invalid or zero length!"
+		}
+		else
+		{
+			$stream.WriteLine($outstring)
+		}
 		
 		$count++
 	}
@@ -105,3 +126,9 @@ $music_footer = (New-Object System.IO.StreamReader (Join-Path $fullAddOnPath "Sc
 $stream.Write($music_footer)
 
 $stream.Close()
+
+if ($Host.Name -eq "ConsoleHost") # Only pause if we're running in the console, not the ISE. This probably won't recognise alternative implementations of PS, but that's not likely to be an issue.
+{
+	"Press any key to continue . . ."
+	Read-Host
+}

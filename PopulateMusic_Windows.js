@@ -1,9 +1,6 @@
 // The path to your WoW folder (using double backslashes as directory separators)
 var WOW_DIR = "C:\\Users\\Public\\Games\\World of Warcraft"
 
-// The exact text that appears in the Type column of Windows Explorer for MP3 files.
-var MP3_TYPE = "MPEG Layer-3 Audio"
-
 // -------------
 // END OF CONFIG
 // -------------
@@ -102,10 +99,17 @@ function AddFiles(path)
 	for (var i = 0; i <= files.Count; i++)
 	{
 		var file = files.Item(i)
-		if (file != null && file.Type.valueOf() == MP3_TYPE.valueOf() ){
+		
+		if (file == null)
+			continue
+		
+		var fileName = file.Name
+		
+		if ( fileName.match(/\.ogg$/i) || fileName.match(/\.mp3$/i) ){
 			var lengthArray = folder.GetDetailsOf(file, LENGTH_INDEX).split(":").reverse() // We reverse the array so the seconds are first, the minutes second, etc.
 			var length = 0.0
-	
+			var invalidLength = false
+			
 			for (var ind = 0; ind <= lengthArray.length; ind++)
 			{
 				if (typeof lengthArray[ind] != "undefined")
@@ -115,9 +119,19 @@ function AddFiles(path)
 				}
 			}
 			
-			echo("Processing " + file.Name + "...")
+			if ( isNaN(length) || length == 0 )
+			{
+				length = 1
+				invalidLength = true
+			}
+			
 			var path = file.Path.replace(WOW_DIR, "").slice(1)
-			musicLua.WriteLine("\t[[" + path + "]], " + length + ",")
+			
+			echo("Processing " + fileName + "...")
+			
+			if (invalidLength) WScript.Echo("Warning: " + path + " has an invalid or zero length!")
+			
+			musicLua.WriteLine("\t[[" + path + "]], " + length + "," + (invalidLength ? " -- Warning: This file has an invalid or zero length!" : "") )
 			
 			count++
 		}
@@ -150,3 +164,9 @@ musicLua.WriteLine(MUSIC_FOOTER)
 musicLua.Close()
 
 WScript.Echo("Added " + addedTotal + " music files to music.lua (" + addedStr + ")")
+
+if (isConsole)
+{
+	echo("\n\nPress any key to continue . . .")
+	WScript.StdIn.ReadLine()
+}

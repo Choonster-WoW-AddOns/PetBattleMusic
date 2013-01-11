@@ -2,6 +2,7 @@ Music/*/*.mp3
 Music/*/*.ogg
 Music/*.jpg
 Libs/*
+*.*~
 
 #################
 ## Eclipse
