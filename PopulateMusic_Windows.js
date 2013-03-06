@@ -1,12 +1,21 @@
+// ---------------
+// START OF CONFIG
+// ---------------
+
 // The path to your WoW folder (using double backslashes as directory separators)
 var WOW_DIR = "C:\\Users\\Public\\Games\\World of Warcraft"
 
-// -------------
-// END OF CONFIG
-// -------------
+// The exact text of the "Type" column in Windows Explorer for MP3 and Ogg files, respectively.
+// You probably won't need to change these unless you've set custom names for MP3 and Ogg files.
+var MP3_TYPE = "MP3 File"
+var OGG_TYPE = "OGG File"
+
+// ---------------
+//  END OF CONFIG
+// ---------------
 // Do not change anything below here!
 
-if (typeof WScript == "undefined")
+if (typeof WScript === "undefined")
 {
 	throw new Error("Unsupported environment. Make sure you're running this script with Microsoft(R) Windows Based Script Host.")
 }
@@ -33,7 +42,7 @@ function isVer() // Quick helper function that takes an arbitrary number of vers
 {
 	for (var i = 0; i < arguments.length; i++)
 	{
-		if (OSVER.indexOf(arguments[i] + ".") == 0) // Add a dot to the end of the string to make sure "6.1" doesn't match "6.10.XXXX" (just in case MS ever uses a double digit NT subversion)
+		if (OSVER.indexOf(arguments[i] + ".") === 0) // Add a dot to the end of the string to make sure "6.1" doesn't match "6.10.XXXX" (just in case MS ever uses a double digit NT subversion)
 			return true
 	}
 	return false
@@ -88,6 +97,12 @@ function echo(str)
 	if (isConsole){ WScript.Echo(str) }
 }
 
+function isAudioFile(file){
+	var fileType = file.Type
+	
+	return fileType === MP3_TYPE || fileType === OGG_TYPE
+}
+
 // JScript doesn't include any sort of sprintf (C) or string.format (Lua) function (or access to .NET, which does have one), so we have to use a whole lot of concatenation.
 function AddFiles(path)
 {	
@@ -96,16 +111,11 @@ function AddFiles(path)
 	
 	var count = 0
 	
-	for (var i = 0; i <= files.Count; i++)
+	for (var i = 0; i < files.Count; i++)
 	{
 		var file = files.Item(i)
 		
-		if (file == null)
-			continue
-		
-		var fileName = file.Name
-		
-		if ( fileName.match(/\.ogg$/i) || fileName.match(/\.mp3$/i) ){
+		if ( isAudioFile(file) ){
 			var lengthArray = folder.GetDetailsOf(file, LENGTH_INDEX).split(":").reverse() // We reverse the array so the seconds are first, the minutes second, etc.
 			var length = 0.0
 			var invalidLength = false
@@ -119,7 +129,7 @@ function AddFiles(path)
 				}
 			}
 			
-			if ( isNaN(length) || length == 0 )
+			if ( isNaN(length) || length === 0 )
 			{
 				length = 1
 				invalidLength = true
@@ -127,7 +137,7 @@ function AddFiles(path)
 			
 			var path = file.Path.replace(WOW_DIR, "").slice(1)
 			
-			echo("Processing " + fileName + "...")
+			echo("Processing " + file.Name + "...")
 			
 			if (invalidLength) WScript.Echo("Warning: " + path + " has an invalid or zero length!")
 			
@@ -156,7 +166,8 @@ for (var i = 0; i <= 5; i++)
 	var added = AddFiles(FULL_MUSIC_DIR + "\\" + dir)
 	addedTotal += added
 	
-	addedStr += ( added + " " + dir + ( i != 5 ? ", " : "") )
+	var sep = (i != 5) ? ", " : ""
+	addedStr += ( added + " " + dir + sep )
 }
 
 var MUSIC_FOOTER = fso.OpenTextFile(FULL_SCRIPTPARTS_DIR + "\\music_footer.lua", ForReading, false, TriStateFalse).ReadAll()
@@ -168,5 +179,5 @@ WScript.Echo("Added " + addedTotal + " music files to music.lua (" + addedStr + 
 if (isConsole)
 {
 	echo("\n\nPress any key to continue . . .")
-	WScript.StdIn.ReadLine()
+	WScript.StdIn.ReadLine() // Pause before exiting so the user has time to read the output.
 }

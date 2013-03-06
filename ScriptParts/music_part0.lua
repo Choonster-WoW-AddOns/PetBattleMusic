@@ -18,7 +18,7 @@ local addon, ns = ...
 --		[[Interface/AddOns/PetBattleMusic/Music/filefour.mp3]],  164,	-- A file that's 164 seconds (2 minutes and 44 seconds) long
 --
 --
--- If you're on Windows, you can use the included PopulateMusic_Windows.js or PopulateMusic_Windows.ps1 scripts to automatically add all mp3 files in the PetBattleMusicMusic folder to this file.
+-- If you're on Windows, you can use the included PopulateMusic_Windows.js or PopulateMusic_Windows.ps1 scripts to automatically add all mp3 files in the PetBattleMusic\Music folder to this file.
 -- The PopulateMusic_Windows.ps1 PowerShell script requires you to temporarily set your execution policy to unrestricted before running the script, so it's probably easier to use the JavaScript version (PopulateMusic_Windows.js).
 -- Just open the script in a text editor (one with syntax highlighting will make this easier) and change the variable(s) at the top to match your computer's setup.
 --
