@@ -18,8 +18,6 @@ end
 
 -- GLOBALS: GetCVar, SetCVar, StopSound, StopMusic
 
-local _; -- Localise the underscore to prevent global leakage and GlyphUI taint
-
 local _G = _G
 local print, type, tostring, tonumber = print, type, tostring, tonumber
 local abs, random, max = math.abs, math.random, math.max
@@ -53,13 +51,13 @@ local MuteTimer = AnimTimerFrame:CreateAnimationGroup("PetBattleMusic_MuteTimerG
 local MuteTimerAnimation = MuteTimer:CreateAnimation("Animation")
 
 MuteTimer:SetScript("OnFinished", function(self)
-	local EnableMusic = self.EnableMusic
+	PBM:StopMusic()
 	
 	--@debug@
-	debug("MuteTimer:OnFinished", EnableMusic)
+	debug("MuteTimer:OnFinished", self.EnableMusic)
 	--@end-debug@
 
-	if EnableMusic then
+	if self.EnableMusic then
 		self.EnableMusic = nil
 		_G.SetCVar("Sound_EnableMusic", EnableMusic)
 	end
@@ -151,6 +149,7 @@ local function PlayTrack(path, length, index, scheduleNext)
 	if MUSIC_CHANNEL == "Music" then
 		_G.PlayMusic(path)
 	else
+		local _;
 		_, CurrentSoundHandle = _G.PlaySoundFile(path, MUSIC_CHANNEL)
 	end
 	
