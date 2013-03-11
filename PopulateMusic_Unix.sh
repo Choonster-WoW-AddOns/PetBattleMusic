@@ -23,9 +23,9 @@ FULL_SCRIPTPARTS_PATH="$WOW_DIR/$PBM_DIR/ScriptParts"
 DIRECTORIES=( General Wild Trainer Player Victory Defeat )
 
 if $USE_BACKSLASHES; then
-	BASE_PATTERN="\t[[%s]], %d,"
+	BASE_PATTERN="\t[[%s]], %.0f,"
 else
-	BASE_PATTERN="\t\"%s\", %d,"
+	BASE_PATTERN="\t\"%s\", %.0f,"
 fi
 
 REGULAR_PATTERN="$BASE_PATTERN\n"
@@ -99,7 +99,7 @@ addfiles() {
 		if $USE_BACKSLASHES; then
 			# Replace forward slashes with backslashes
 			# http://stackoverflow.com/questions/2871181/bash-string-replacing-a-some-char-with-another
-			relpath=$(echo "$relpath" | sed -r 's/[/]+/\\/g')
+			relpath=$(echo "$relpath" | sed 's/[/]/\\/g')
 		fi
 		
 		echo "Processing $filename..."
