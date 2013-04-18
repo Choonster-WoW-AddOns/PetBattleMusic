@@ -131,3 +131,5 @@ done
 
 read -r -d '' MUSIC_FOOTER < "$FULL_SCRIPTPARTS_PATH/music_footer.lua"
 echo "$MUSIC_FOOTER" >> "$FULL_LUA_PATH"
+
+read -p "Press any key to continue..." -n1 -s
