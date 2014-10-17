@@ -64,7 +64,7 @@ else
 {
 	throw new Error(
 		(
-		"\n\nUnknown Windows version. This script only supports Windows 8, 7, Vista, XP and 2000 as well as Windows Server 2012, 2008 and 2003.\n\n\
+		"\n\nUnknown Windows version. This script only supports Windows 8/8.1, 7, Vista, XP and 2000 as well as Windows Server 2012, 2008 and 2003.\n\n\
 		If you want support added for your version of Windows, please run the included GetLengthIndex_Windows.js script and click OK until the popup shows something like Length, Duration or Play Length as the Property Name.\n\n\
 		Once you get to this popup, leave a comment on Curse or WoW Interface with its contents.\n\n\
 		If the script generates an error instead of a series of popups, leave a comment on Curse or WoW Interface with the error and which version of Windows you're using.\n"
