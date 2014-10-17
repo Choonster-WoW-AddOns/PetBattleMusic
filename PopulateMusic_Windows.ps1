@@ -64,6 +64,39 @@ $shell = New-Object -COMObject Shell.Application
 
 $stream = New-Object System.IO.StreamWriter $luapath, $false, ([System.Text.Encoding]::UTF8)
 
+Function getMP3Length ($shellfolder, $filename)
+{	
+	$shellfile = ([System.__ComObject] $shellfolder).ParseName($filename)
+	$lengthStr = $shellfolder.GetDetailsOf($shellfile, $lengthIndex)
+	$hours, $mins, $secs = [double[]] ($lengthStr -Split ':')
+	$length = ($hours * 60 * 60) + ($mins * 60) + $secs
+
+	return $length
+}
+
+$oggInfoPath = Join-Path $fullAddOnPath 'ogginfo\ogginfo.exe'
+$lengthRegex = [regex] 'Playback length: (?<minutes>\d+)m:(?<seconds>\d+)\.?\d*'
+Function getOggLength ($fullname)
+{
+	$output = & "$oggInfoPath" "$fullname" 2>&1
+	$isMatch = $output -match $lengthRegex
+	
+	
+	
+	$length = 0
+	if ($isMatch)
+	{
+		$length = [int] $matches['minutes'] * 60 + [int] $matches['seconds']
+	}
+
+	if ($length -eq 0)
+	{
+		Write-Host "`n`n" $output "`n`n"
+	}
+	
+	return $length
+}
+
 $include = ( "*.mp3", "*.ogg" )
 
 Function AddFiles ($findpath)
@@ -80,14 +113,21 @@ Function AddFiles ($findpath)
 	{
 		$fullname = $file.FullName
 		$filename = Split-Path $fullname -Leaf
-		$shellfile = $shellfolder.ParseName($filename)
-		$lengthStr = $shellfolder.GetDetailsOf($shellfile, $lengthIndex)
-		$hours, $mins, $secs = [double[]] ($lengthStr -Split ':')
+		
+		"Processing: $filename..."
+		
+		$length = 0
+		
+		if ($filename.EndsWith(".mp3"))
+		{
+			$length = getMP3Length $shellfolder $filename
+		}
+		else
+		{
+			$length = getOggLength $fullname
+		}
 		
 		$invalidLength = $false
-		
-		$length = ($hours * 60 * 60) + ($mins * 60) + $secs
-		
 		if ($length -eq 0)
 		{
 			$length = 1
@@ -96,7 +136,6 @@ Function AddFiles ($findpath)
 		
 		$filepath = $fullname.Replace($wowPath + '\', '')
 		$outstring = "`t[[$filepath]], $length,"
-		"Processing: $filename..."
 		
 		if ($invalidLength)
 		{

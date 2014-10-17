@@ -1,0 +1,1 @@
+Place ogginfo.exe, libogg.dll and libvorbis.dll here.

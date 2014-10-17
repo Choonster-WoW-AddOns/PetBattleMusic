@@ -3,6 +3,8 @@ Music/*/*.ogg
 Music/*.jpg
 Libs/*
 *.*~
+*.dll
+*.exe
 
 #################
 ## Eclipse

@@ -5,11 +5,6 @@
 // The path to your WoW folder (using double backslashes as directory separators)
 var WOW_DIR = "C:\\Users\\Public\\Games\\World of Warcraft"
 
-// The exact text of the "Type" column in Windows Explorer for MP3 and Ogg files, respectively.
-// You probably won't need to change these unless you've set custom names for MP3 and Ogg files.
-var MP3_TYPE = "MP3 File"
-var OGG_TYPE = "OGG File"
-
 // ---------------
 //  END OF CONFIG
 // ---------------
@@ -97,10 +92,59 @@ function echo(str)
 	if (isConsole){ WScript.Echo(str) }
 }
 
-function isAudioFile(file){
-	var fileType = file.Type
+var mp3Regex = /\.mp3$/, oggRegex = /\.ogg$/
+function getAudioFileExtension(file)
+{
+	var fileName = file.Name	
 	
-	return fileType === MP3_TYPE || fileType === OGG_TYPE
+	if (mp3Regex.test(fileName) || oggRegex.test(fileName))
+	{
+		return fileName.substring(fileName.length - 3)
+	}
+	else
+	{
+		return null
+	}
+}
+
+function getMP3Length(folder, file)
+{
+	var lengthArray = folder.GetDetailsOf(file, LENGTH_INDEX).split(":").reverse() // We reverse the array so the seconds are first, the minutes second, etc.
+	var length = 0.0
+	
+	for (var ind = 0; ind <= lengthArray.length; ind++)
+	{
+		if (typeof lengthArray[ind] != "undefined")
+		{
+			var num = parseInt(lengthArray[ind], 10) // Always specify radix otherwise numbers starting with 0 will be treated as octal
+			length += (num * Math.pow(60, ind))
+		}
+	}
+	
+	return length
+}
+
+var lengthRegex = /Playback length: (\d+)m:(\d+)\.?\d*/
+var oggInfoPath = '"' + PBM_DIR + '\\ogginfo\\ogginfo.exe" "'
+var wsShell = WScript.CreateObject("WScript.Shell")
+
+function getOggLength(file)
+{
+	var result = wsShell.Exec(oggInfoPath + file.Path + '"')
+	var output = result.StdOut.ReadAll()
+	
+	var matches = lengthRegex.exec(output)
+	
+	if (matches === null)
+	{
+		echo(output)
+		return 0
+	}
+	
+	if (matches.length < 3)	return 0
+	
+	var minutes = matches[1], seconds = matches[2]
+	return minutes * 60 + seconds
 }
 
 // JScript doesn't include any sort of sprintf (C) or string.format (Lua) function (or access to .NET, which does have one), so we have to use a whole lot of concatenation.
@@ -115,19 +159,20 @@ function AddFiles(path)
 	{
 		var file = files.Item(i)
 		
-		if ( isAudioFile(file) ){
-			var lengthArray = folder.GetDetailsOf(file, LENGTH_INDEX).split(":").reverse() // We reverse the array so the seconds are first, the minutes second, etc.
-			var length = 0.0
-			var invalidLength = false
+		var extension = getAudioFileExtension(file)
+		if ( extension !== null ){
+			var length
 			
-			for (var ind = 0; ind <= lengthArray.length; ind++)
+			if (extension === "mp3")
 			{
-				if (typeof lengthArray[ind] != "undefined")
-				{
-					var num = parseInt(lengthArray[ind])
-					length += (num * Math.pow(60, ind))
-				}
+				length = getMP3Length(folder, file)
 			}
+			else
+			{
+				length = getOggLength(file)
+			}			
+			
+			var invalidLength = false
 			
 			if ( isNaN(length) || length === 0 )
 			{
