@@ -16,9 +16,9 @@ local function debug(...)
 end
 --@end-debug@
 
--- GLOBALS: GetCVar, SetCVar, StopSound, StopMusic
+-- GLOBALS: GetCVar, SetCVar, PlayMusic, PlaySoundFile, StopSound, StopMusic, C_Timer, table, print
+-- GLOBALS: SlashCmdList, SLASH_PBMERRORS1, PBMAPI
 
-local _G = _G
 local print, type, tostring, tonumber = print, type, tostring, tonumber
 local abs, random, max = math.abs, math.random, math.max
 local tinsert, tremove = table.insert, table.remove
@@ -39,29 +39,55 @@ PBM:SetScript("OnEvent", function(self, event, ...)
 	self[event](self, ...)
 end)
 
-local Timer = AnimTimerFrame:CreateAnimationGroup("PetBattleMusic_MusicTimerGroup") -- Controls the playing of the next track.
-local TimerAnimation = Timer:CreateAnimation("Animation")
 
-Timer:SetScript("OnFinished", function(self)
-	PBM:PlayNextTrack(self.scheduleNext)
-end)
+local MusicTimer = {}
+
+function MusicTimer.Start(duration, scheduleNext)
+	MusicTimer.CurrentTimer = C_Timer.NewTimer(duration, MusicTimer.Callback)
+	MusicTimer.ScheduleNext = scheduleNext
+	
+	--@debug@
+	debug("MusicTimer.Start", duration, scheduleNext)
+	--@end-debug@
+end
+
+function MusicTimer.Stop()
+	if MusicTimer.CurrentTimer then
+		MusicTimer.CurrentTimer:Cancel()
+	end
+	
+	--@debug@
+	debug("MusicTimer.Stop", MusicTimer.CurrentTimer)
+	--@end-debug@
+end
+
+function MusicTimer.Callback()
+	PBM:PlayNextTrack(MusicTimer.ScheduleNext)
+	
+	--@debug@
+	debug("MusicTimer.Callback", MusicTimer.ScheduleNext)
+	--@end-debug@
+end
 
 
-local MuteTimer = AnimTimerFrame:CreateAnimationGroup("PetBattleMusic_MuteTimerGroup") -- Controls the unmuting of music when the battle ends.
-local MuteTimerAnimation = MuteTimer:CreateAnimation("Animation")
+local MuteTimer = {}
 
-MuteTimer:SetScript("OnFinished", function(self)
+function MuteTimer.Start()
+	C_Timer.After(MuteTimer.Duration or 0, MuteTimer.Callback)
+end
+
+function MuteTimer.Callback()
 	PBM:StopMusic()
 	
 	--@debug@
-	debug("MuteTimer:OnFinished", self.EnableMusic)
+	debug("MuteTimer.Callback", MuteTimer.EnableMusic)
 	--@end-debug@
 
-	if self.EnableMusic then
-		self.EnableMusic = nil
-		_G.SetCVar("Sound_EnableMusic", EnableMusic)
+	if MuteTimer.EnableMusic then		
+		SetCVar("Sound_EnableMusic", MuteTimer.EnableMusic)
+		MuteTimer.EnableMusic = nil
 	end
-end)
+end
 
 --[[-------
 -- Music --
@@ -143,20 +169,18 @@ end
 
 local function PlayTrack(path, length, index, scheduleNext)
 	--@debug@
-	debug("PlayTrack!", "Path:", path, "Length:", length, "Index:", index, "ScheduleNext:", scheduleNext) -- DEBUG!
+	debug("PlayTrack!", "Path:", path, "Length:", length, "Index:", index, "ScheduleNext:", scheduleNext, "Channel:", MUSIC_CHANNEL)
 	--@end-debug@
 	
 	if MUSIC_CHANNEL == "Music" then
-		_G.PlayMusic(path)
+		PlayMusic(path)
 	else
 		local _;
-		_, CurrentSoundHandle = _G.PlaySoundFile(path, MUSIC_CHANNEL)
+		_, CurrentSoundHandle = PlaySoundFile(path, MUSIC_CHANNEL)
 	end
 	
 	if scheduleNext then
-		TimerAnimation:SetDuration(length + DELAY) -- We schedule the next timer to go off DELAY seconds after the current track ends
-		Timer.scheduleNext = scheduleNext
-		Timer:Play()
+		MusicTimer.Start(length + DELAY, scheduleNext) -- We schedule the next timer to go off DELAY seconds after the current track ends
 	end
 	
 	PreviousTrackIndex = index
@@ -193,12 +217,12 @@ end
 function PBM:StopMusic()
 	if IsPlaying then
 		if MUSIC_CHANNEL == "Music" then
-			_G.StopMusic()
+			StopMusic()
 		elseif CurrentSoundHandle then
-			_G.StopSound(CurrentSoundHandle)
+			StopSound(CurrentSoundHandle)
 		end
 	end
-	Timer:Stop()
+	MusicTimer.Stop()
 	IsPlaying = false
 	PreviousTrackIndex = nil
 end
@@ -209,8 +233,8 @@ function PBM:PET_BATTLE_OPENING_START()
 	end
 	
 	if MUTE_MUSIC then
-		MuteTimer.EnableMusic = _G.GetCVar("Sound_EnableMusic")
-		_G.SetCVar("Sound_EnableMusic", 0)
+		MuteTimer.EnableMusic = GetCVar("Sound_EnableMusic")
+		SetCVar("Sound_EnableMusic", 0)
 		
 		--@debug@
 		debug("MuteTimer.EnableMusic", MuteTimer.EnableMusic)
@@ -234,13 +258,13 @@ function PBM:PET_BATTLE_FINAL_ROUND(winner)
 	self:StopMusic()
 	
 	local trackLength = self:PlayNextTrack(false) -- Only play victory/defeat music once
-	MuteTimerAnimation:SetDuration((trackLength or 0) + 0.5)
+	MuteTimer.Duration = (trackLength or 0) + 0.5
 	-- Unmute the game music 0.5 seconds after the victory/defeat track finishes or 0.5 seconds from now if we didn't play a track
 	-- The extra 0.5 seconds allows time for the game's pet battle music to stop
 end
 
 function PBM:PET_BATTLE_OVER()
-	MuteTimer:Play()
+	MuteTimer.Start()
 	
 	--@debug@
 	debug("PBM: PET_BATTLE_OVER!") -- DEBUG
