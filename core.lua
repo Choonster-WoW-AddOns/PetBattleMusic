@@ -73,10 +73,24 @@ end
 local MuteTimer = {}
 
 function MuteTimer.Start()
-	C_Timer.After(MuteTimer.Duration or 0, MuteTimer.Callback)
+	MuteTimer.InProgress = true
+	MuteTimer.CurrentTimer = C_Timer.NewTimer(MuteTimer.Duration or 0, MuteTimer.Callback)
+end
+
+function MuteTimer.Stop()
+	MuteTimer.InProgress = false
+	
+	if MuteTimer.CurrentTimer then
+		MuteTimer.CurrentTimer:Cancel()
+	end
+	
+	--@debug@
+	debug("MuteTimer.Stop", MusicTimer.CurrentTimer)
+	--@end-debug@
 end
 
 function MuteTimer.Callback()
+	MuteTimer.InProgress = false
 	PBM:StopMusic()
 	
 	--@debug@
@@ -233,7 +247,12 @@ function PBM:PET_BATTLE_OPENING_START()
 	end
 	
 	if MUTE_MUSIC then
-		MuteTimer.EnableMusic = GetCVar("Sound_EnableMusic")
+		if MuteTimer.InProgress then -- The previous battle's mute timer is still running, cancel it and keep the EnableMusic value
+			MuteTimer.Stop()
+		else
+			MuteTimer.EnableMusic = GetCVar("Sound_EnableMusic")
+		end
+		
 		SetCVar("Sound_EnableMusic", 0)
 		
 		--@debug@
