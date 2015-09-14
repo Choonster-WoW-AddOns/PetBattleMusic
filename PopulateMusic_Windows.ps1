@@ -23,7 +23,7 @@ Function isVer  # Quick helper function that takes an arbitrary number of versio
 }
 	
 
-if ( isVer "6.3" "6.2" "6.1" "6.0" ) # Windows 8.1/Server 2012 R2 (NT 6.3), Windows 8/Server 2012 (NT 6.2) [Thanks to user_151079 of Curse for this index], Windows 7/Server 2008 R2 (NT 6.1) and Windows Vista/Server 2008 (NT 6.0)
+if ( isVer "10.0" "6.3" "6.2" "6.1" "6.0" ) # Windows 10 (NT 10.0) [Thanks to badjujumojo of Curse for this index], Windows 8.1/Server 2012 R2 (NT 6.3), Windows 8/Server 2012 (NT 6.2) [Thanks to user_151079 of Curse for this index], Windows 7/Server 2008 R2 (NT 6.1) and Windows Vista/Server 2008 (NT 6.0)
 {
 	$lengthIndex = 27 # Length
 }
@@ -40,7 +40,7 @@ else
 	[System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 	[System.Windows.Forms.MessageBox]::Show((
 @"
-		`n`nUnknown Windows version. This script only supports Windows 8/8.1, 7, Vista, XP and 2000 as well as Windows Server 2012, 2008 and 2003.`n
+		`n`nUnknown Windows version. This script only supports Windows 10, 8/8.1, 7, Vista, XP and 2000 as well as Windows Server 2012, 2008 and 2003.`n
 		If you want support added for your version of Windows, please run the included GetlengthIndex_Windows.js script and click OK until the popup shows something like Length, Duration or Play Length (i.e. the length of an audio file) as the Property Name.`n
 		Once you get to this popup, leave a comment on Curse or WoW Interface with its contents.`n
 		If the script generates an error instead of a series of popups, leave a comment on Curse or WoW Interface with the error and which version of Windows you're using.`n

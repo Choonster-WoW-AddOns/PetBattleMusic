@@ -43,7 +43,7 @@ function isVer() // Quick helper function that takes an arbitrary number of vers
 	return false
 }	
 
-if ( isVer("6.3", "6.2", "6.1", "6.0") ) // Windows 8.1/Server 2012 R2 (NT 6.3), Windows 8/Server 2012 (NT 6.2) [Thanks to user_151079 of Curse for this index], Windows 7/Server 2008 R2 (NT 6.1) and Windows Vista/Server 2008 (NT 6.0)
+if ( isVer("10.0", "6.3", "6.2", "6.1", "6.0") ) // Windows 10 (NT 10.0) [Thanks to badjujumojo of Curse for this index], Windows 8.1/Server 2012 R2 (NT 6.3), Windows 8/Server 2012 (NT 6.2) [Thanks to user_151079 of Curse for this index], Windows 7/Server 2008 R2 (NT 6.1) and Windows Vista/Server 2008 (NT 6.0)
 {
 	LENGTH_INDEX = 27 // Length
 }
