@@ -1,3 +1,9 @@
+## 1.7.1
+- Add missing changelog for 1.7
+
+## 1.7
+- Update to 7.0
+
 ## 1.6
 - Update Windows scripts to work with Windows 10
 	- Thanks to badjujumojo of Curse for the index
