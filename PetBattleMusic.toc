@@ -1,9 +1,12 @@
 ﻿## Title: Pet Battle Music
-## Interface: 70000
+## Interface: 80000
 ## Author: Choonster
 ## Version: @project-version@
 ## Notes: Plays custom music during pet battles. See music.lua for configuration instructions.
 ## X-License: MIT License
+
+## X-Curse-Project-ID: 44240
+## X-WoWI-ID: 21557
 
 config.lua
 music.lua

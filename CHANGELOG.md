@@ -1,3 +1,8 @@
+## 1.8
+- Bump TOC Interface version to 8.0
+- Add .travis.yml file and TOC properties for the BigWigs packager script
+	- https://www.wowinterface.com/forums/showthread.php?t=55801
+
 ## 1.7.1
 - Add missing changelog for 1.7
 
