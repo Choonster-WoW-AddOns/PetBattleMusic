@@ -1,3 +1,7 @@
+## 1.9
+- Bump TOC Interface version to 9.0
+- Fix PopulateMusic_Windows PowerShell script
+
 ## 1.8
 - Bump TOC Interface version to 8.0
 - Add .travis.yml file and TOC properties for the BigWigs packager script
