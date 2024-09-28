@@ -3,7 +3,7 @@
 // ---------------
 
 // The path to your WoW folder (using double backslashes as directory separators)
-var WOW_DIR = "D:\\World of Warcraft\\_retail_";
+var WOW_DIR = "C:\\Program Files (x86)\\World of Warcraft\\_retail_";
 
 // ---------------
 //  END OF CONFIG

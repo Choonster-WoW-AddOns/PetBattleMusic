@@ -6,7 +6,7 @@ using namespace System.Text
 # START OF CONFIG
 # -------------
 
-[string] $wowPath = 'D:\World of Warcraft\_retail_'
+[string] $wowPath = 'C:\Program Files (x86)\World of Warcraft\_retail_'
 
 # -------------
 # END OF CONFIG
