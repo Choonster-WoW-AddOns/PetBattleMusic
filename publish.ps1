@@ -30,6 +30,8 @@ function Copy-BackupItem {
         [string]
         $Message
     )
+
+    Write-Host $Message
     
     $sourcePath = Join-Path $SourceDir $RelativePath
     $destinationPath = Join-Path $DestinationDir $RelativePath
@@ -37,12 +39,10 @@ function Copy-BackupItem {
     $isDirectory = Test-Path -LiteralPath $sourcePath -PathType Container
 
     if ($isDirectory -and (Test-Path $destinationPath)) {
-        Remove-Item -LiteralPath $destinationPath -Recurse
+        Remove-Item -LiteralPath $destinationPath -Recurse -Force
     }
 
     Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse:$isDirectory
-
-    Write-Host $Message
 }
 
 [bool]$ShouldBackup = Test-Path -LiteralPath $AddOnDir
@@ -57,7 +57,7 @@ if ($ShouldBackup) {
             -RelativePath $_ `
             -SourceDir $AddOnDir `
             -DestinationDir $BackupDir `
-            -Message "Backed up $_"
+            -Message "Backing up $_"
     }
 }
 
@@ -69,6 +69,6 @@ if ($ShouldBackup) {
             -RelativePath $_ `
             -SourceDir $BackupDir `
             -DestinationDir $AddOnDir `
-            -Message "Restored $_"
+            -Message "Restoring $_"
     }
 }
